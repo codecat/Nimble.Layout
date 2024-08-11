@@ -693,5 +693,30 @@ namespace Nimble.Layout.Tests
 
 			Assert.AreEqual(new(40, 40, 50, 50), child.Rect);
 		}
+
+		[TestMethod]
+		public void IssueUpstream15()
+		{
+			var root = new LayoutItem {
+				Size = new(1, 100),
+			};
+
+			var row = new LayoutItem {
+				Contain = ContainFlags.Row,
+			};
+			root.AddChild(row);
+
+			var child = new LayoutItem {
+				Size = new(1, 50),
+				Margins = new(0, 0, 0, 10),
+			};
+			row.AddChild(child);
+
+			root.Run();
+
+			Assert.AreEqual(new(0, 0, 1, 100), root.Rect);
+			Assert.AreEqual(new(0, 20, 1, 60), row.Rect);
+			Assert.AreEqual(new(0, 20, 1, 50), child.Rect);
+		}
 	}
 }

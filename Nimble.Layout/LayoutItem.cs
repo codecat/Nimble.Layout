@@ -487,7 +487,7 @@ namespace Nimble.Layout
 
 				switch (b_flags & BehaveFlags.HFill) {
 					case BehaveFlags.HCenter:
-						child.m_computedRect[dim] += (space - child.m_computedRect[2 + dim]) / 2 - child.Margins[wdim];
+						child.m_computedRect[dim] += (space - child.m_computedRect[2 + dim] - child.Margins[wdim]) / 2;
 						break;
 
 					case BehaveFlags.Right:
@@ -538,7 +538,7 @@ namespace Nimble.Layout
 				switch (b_flags & BehaveFlags.HFill) {
 					case BehaveFlags.HCenter:
 						item.m_computedRect[2 + dim] = Math.Min(item.m_computedRect[2 + dim], min_size);
-						item.m_computedRect[dim] += (space - item.m_computedRect[2 + dim]) / 2 - item.Margins[wdim];
+						item.m_computedRect[dim] += (space - item.m_computedRect[2 + dim] - item.Margins[wdim]) / 2;
 						break;
 
 					case BehaveFlags.Right:
