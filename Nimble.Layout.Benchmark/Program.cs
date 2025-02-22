@@ -31,11 +31,11 @@
 			const int numRowsWithHeight = numRows - 1;
 
 			var root = new LayoutItem {
-				Size = new(70, numRowsWithHeight * 10 + 2 * 10),
+				RequestedSize = new(70, numRowsWithHeight * 10 + 2 * 10),
 			};
 
 			var mainChild = new LayoutItem {
-				Margins = new(10),
+				RequestedMargins = new(10),
 				Contain = ContainFlags.Column,
 				Behave = BehaveFlags.Fill,
 			};
@@ -64,7 +64,7 @@
 			for (int i = 0; i < cols2.Length; i++) {
 				// Fixed-size horizontally, fill vertically
 				cols2[i] = new LayoutItem {
-					Size = new(10, 0),
+					RequestedSize = new(10, 0),
 					Behave = BehaveFlags.VFill,
 				};
 			}
@@ -80,7 +80,7 @@
 					Behave = BehaveFlags.Bottom,
 				};
 				var innerSize = new LayoutItem {
-					Size = new(25, 10 * i),
+					RequestedSize = new(25, 10 * i),
 				};
 				col.AddChild(innerSize);
 				cols3[i] = col;

@@ -2,8 +2,8 @@
 {
 	public struct LayoutVector(float x, float y)
 	{
-		public float X { get; set; } = x;
-		public float Y { get; set; } = y;
+		public float X = x;
+		public float Y = y;
 
 		public LayoutVector() : this(0, 0) { }
 

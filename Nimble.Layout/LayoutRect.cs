@@ -2,10 +2,10 @@
 {
 	public struct LayoutRect(float x, float y, float width, float height)
 	{
-		public float X { get; set; } = x;
-		public float Y { get; set; } = y;
-		public float Width { get; set; } = width;
-		public float Height { get; set; } = height;
+		public float X = x;
+		public float Y = y;
+		public float Width = width;
+		public float Height = height;
 
 		public LayoutRect() : this(0, 0, 0, 0) { }
 

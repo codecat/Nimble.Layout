@@ -26,7 +26,7 @@
 		// center in both directions, with left/top margin as offset
 		Center = 0x000,
 		// anchor to all four directions
-		Fill = 0x1e0,
+		Fill = HFill | VFill,
 
 		// When in a wrapping container, put this element on a new line. Wrapping
 		// layout code auto-inserts LAY_BREAK flags as needed. See GitHub issues for

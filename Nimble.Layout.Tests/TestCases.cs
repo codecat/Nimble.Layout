@@ -11,7 +11,7 @@ namespace Nimble.Layout.Tests
 			};
 
 			var root = new LayoutItem {
-				Size = new(30, 40),
+				RequestedSize = new(30, 40),
 			};
 
 			root.AddChild(child);
@@ -19,18 +19,18 @@ namespace Nimble.Layout.Tests
 
 			Assert.AreEqual(new(0, 0, 30, 40), root.Rect);
 			Assert.AreEqual(new(0, 0, 30, 40), child.Rect);
-			Assert.AreEqual(new(30, 40), root.Size);
+			Assert.AreEqual(new(30, 40), root.RequestedSize);
 		}
 
 		[TestMethod]
 		public void MultipleUninserted()
 		{
 			var root = new LayoutItem {
-				Size = new(155, 177),
+				RequestedSize = new(155, 177),
 			};
 			var child1 = new LayoutItem();
 			var child2 = new LayoutItem {
-				Size = new(1, 1),
+				RequestedSize = new(1, 1),
 			};
 
 			root.Run();
@@ -44,7 +44,7 @@ namespace Nimble.Layout.Tests
 		public void ColumnEvenFill()
 		{
 			var root = new LayoutItem {
-				Size = new(50, 60),
+				RequestedSize = new(50, 60),
 				Contain = ContainFlags.Column,
 			};
 
@@ -65,20 +65,20 @@ namespace Nimble.Layout.Tests
 		public void RowEvenFill()
 		{
 			var root = new LayoutItem {
-				Size = new(90, 3),
+				RequestedSize = new(90, 3),
 				Contain = ContainFlags.Row,
 			};
 
 			var childA = new LayoutItem {
-				Size = new(0, 1),
+				RequestedSize = new(0, 1),
 				Behave = BehaveFlags.HFill | BehaveFlags.Top,
 			};
 			var childB = new LayoutItem {
-				Size = new(0, 1),
+				RequestedSize = new(0, 1),
 				Behave = BehaveFlags.HFill | BehaveFlags.VCenter,
 			};
 			var childC = new LayoutItem {
-				Size = new(0, 1),
+				RequestedSize = new(0, 1),
 				Behave = BehaveFlags.HFill | BehaveFlags.Bottom,
 			};
 
@@ -95,15 +95,15 @@ namespace Nimble.Layout.Tests
 		public void FixedAndFill()
 		{
 			var root = new LayoutItem {
-				Size = new(50, 60),
+				RequestedSize = new(50, 60),
 				Contain = ContainFlags.Column,
 			};
 
 			var fixedA = new LayoutItem {
-				Size = new(50, 15),
+				RequestedSize = new(50, 15),
 			};
 			var fixedB = new LayoutItem {
-				Size = new(50, 15),
+				RequestedSize = new(50, 15),
 			};
 			var filler = new LayoutItem {
 				Behave = BehaveFlags.Fill,
@@ -122,30 +122,30 @@ namespace Nimble.Layout.Tests
 		public void SimpleMargins1()
 		{
 			var root = new LayoutItem {
-				Size = new(100, 90),
+				RequestedSize = new(100, 90),
 				Contain = ContainFlags.Column,
 			};
 
 			var childA = new LayoutItem {
-				Size = new(0, 30 - (5 + 10)),
-				Margins = new(3, 5, 7, 10),
+				RequestedSize = new(0, 30 - (5 + 10)),
+				RequestedMargins = new(3, 5, 7, 10),
 				Behave = BehaveFlags.HFill,
 			};
 			var childB = new LayoutItem {
 				Behave = BehaveFlags.Fill,
 			};
 			var childC = new LayoutItem {
-				Size = new(0, 30),
+				RequestedSize = new(0, 30),
 				Behave = BehaveFlags.HFill,
 			};
 
 			root.AddChildren([childA, childB, childC]);
 			root.Run();
 
-			Assert.AreEqual(3, childA.Margins.Left);
-			Assert.AreEqual(5, childA.Margins.Top);
-			Assert.AreEqual(7, childA.Margins.Right);
-			Assert.AreEqual(10, childA.Margins.Bottom);
+			Assert.AreEqual(3, childA.RequestedMargins.Left);
+			Assert.AreEqual(5, childA.RequestedMargins.Top);
+			Assert.AreEqual(7, childA.RequestedMargins.Right);
+			Assert.AreEqual(10, childA.RequestedMargins.Bottom);
 
 			Assert.AreEqual(new(3, 5, 90, 5 + 10), childA.Rect);
 			Assert.AreEqual(new(0, 30, 100, 30), childB.Rect);
@@ -160,11 +160,11 @@ namespace Nimble.Layout.Tests
 			const int numRowsWithHeight = numRows - 1;
 
 			var root = new LayoutItem {
-				Size = new(70, numRowsWithHeight * 10 + 2 * 10),
+				RequestedSize = new(70, numRowsWithHeight * 10 + 2 * 10),
 			};
 
 			var mainChild = new LayoutItem {
-				Margins = new(10),
+				RequestedMargins = new(10),
 				Contain = ContainFlags.Column,
 				Behave = BehaveFlags.Fill,
 			};
@@ -193,7 +193,7 @@ namespace Nimble.Layout.Tests
 			for (int i = 0; i < cols2.Length; i++) {
 				// Fixed-size horizontally, fill vertically
 				cols2[i] = new LayoutItem {
-					Size = new(10, 0),
+					RequestedSize = new(10, 0),
 					Behave = BehaveFlags.VFill,
 				};
 			}
@@ -209,7 +209,7 @@ namespace Nimble.Layout.Tests
 					Behave = BehaveFlags.Bottom,
 				};
 				var innerSize = new LayoutItem {
-					Size = new(25, 10 * i),
+					RequestedSize = new(25, 10 * i),
 				};
 				col.AddChild(innerSize);
 				cols3[i] = col;
@@ -307,7 +307,7 @@ namespace Nimble.Layout.Tests
 				parent = item;
 			}
 
-			parent.Size = new(77, 99);
+			parent.RequestedSize = new(77, 99);
 			root.Run();
 
 			Assert.AreEqual(new(0, 0, 77, 99), root.Rect);
@@ -317,7 +317,7 @@ namespace Nimble.Layout.Tests
 		{
 			for (int i = 0; i < num; i++) {
 				yield return new() {
-					Size = new(1, 1),
+					RequestedSize = new(1, 1),
 				};
 			}
 		}
@@ -328,7 +328,7 @@ namespace Nimble.Layout.Tests
 			const int numItems = 20000;
 
 			var root = new LayoutItem {
-				Size = new(1, 0),
+				RequestedSize = new(1, 0),
 				Contain = ContainFlags.Column,
 			};
 
@@ -342,22 +342,22 @@ namespace Nimble.Layout.Tests
 		public void ChildAlign1()
 		{
 			var root = new LayoutItem {
-				Size = new(50, 50),
+				RequestedSize = new(50, 50),
 			};
 
 			var alignedBoxes = new LayoutItem[9];
 
-			root.AddChild(alignedBoxes[0] = new() { Size = new(10, 10), Behave = BehaveFlags.Top | BehaveFlags.Left });
-			root.AddChild(alignedBoxes[1] = new() { Size = new(10, 10), Behave = BehaveFlags.Top | BehaveFlags.Right });
-			root.AddChild(alignedBoxes[2] = new() { Size = new(10, 10), Behave = BehaveFlags.Top | BehaveFlags.HCenter });
+			root.AddChild(alignedBoxes[0] = new() { RequestedSize = new(10, 10), Behave = BehaveFlags.Top | BehaveFlags.Left });
+			root.AddChild(alignedBoxes[1] = new() { RequestedSize = new(10, 10), Behave = BehaveFlags.Top | BehaveFlags.Right });
+			root.AddChild(alignedBoxes[2] = new() { RequestedSize = new(10, 10), Behave = BehaveFlags.Top | BehaveFlags.HCenter });
 
-			root.AddChild(alignedBoxes[3] = new() { Size = new(10, 10), Behave = BehaveFlags.VCenter | BehaveFlags.Left });
-			root.AddChild(alignedBoxes[4] = new() { Size = new(10, 10), Behave = BehaveFlags.VCenter | BehaveFlags.Right });
-			root.AddChild(alignedBoxes[5] = new() { Size = new(10, 10), Behave = BehaveFlags.VCenter | BehaveFlags.HCenter });
+			root.AddChild(alignedBoxes[3] = new() { RequestedSize = new(10, 10), Behave = BehaveFlags.VCenter | BehaveFlags.Left });
+			root.AddChild(alignedBoxes[4] = new() { RequestedSize = new(10, 10), Behave = BehaveFlags.VCenter | BehaveFlags.Right });
+			root.AddChild(alignedBoxes[5] = new() { RequestedSize = new(10, 10), Behave = BehaveFlags.VCenter | BehaveFlags.HCenter });
 
-			root.AddChild(alignedBoxes[6] = new() { Size = new(10, 10), Behave = BehaveFlags.Bottom | BehaveFlags.Left });
-			root.AddChild(alignedBoxes[7] = new() { Size = new(10, 10), Behave = BehaveFlags.Bottom | BehaveFlags.Right });
-			root.AddChild(alignedBoxes[8] = new() { Size = new(10, 10), Behave = BehaveFlags.Bottom | BehaveFlags.HCenter });
+			root.AddChild(alignedBoxes[6] = new() { RequestedSize = new(10, 10), Behave = BehaveFlags.Bottom | BehaveFlags.Left });
+			root.AddChild(alignedBoxes[7] = new() { RequestedSize = new(10, 10), Behave = BehaveFlags.Bottom | BehaveFlags.Right });
+			root.AddChild(alignedBoxes[8] = new() { RequestedSize = new(10, 10), Behave = BehaveFlags.Bottom | BehaveFlags.HCenter });
 
 			root.Run();
 
@@ -378,18 +378,18 @@ namespace Nimble.Layout.Tests
 		public void ChildAlign2()
 		{
 			var root = new LayoutItem {
-				Size = new(50, 50),
+				RequestedSize = new(50, 50),
 			};
 
 			var alignedBoxes = new LayoutItem[6];
 
-			root.AddChild(alignedBoxes[0] = new() { Size = new(10, 10), Behave = BehaveFlags.Top | BehaveFlags.HFill });
-			root.AddChild(alignedBoxes[1] = new() { Size = new(10, 10), Behave = BehaveFlags.VCenter | BehaveFlags.HFill });
-			root.AddChild(alignedBoxes[2] = new() { Size = new(10, 10), Behave = BehaveFlags.Bottom | BehaveFlags.HFill });
+			root.AddChild(alignedBoxes[0] = new() { RequestedSize = new(10, 10), Behave = BehaveFlags.Top | BehaveFlags.HFill });
+			root.AddChild(alignedBoxes[1] = new() { RequestedSize = new(10, 10), Behave = BehaveFlags.VCenter | BehaveFlags.HFill });
+			root.AddChild(alignedBoxes[2] = new() { RequestedSize = new(10, 10), Behave = BehaveFlags.Bottom | BehaveFlags.HFill });
 
-			root.AddChild(alignedBoxes[3] = new() { Size = new(10, 10), Behave = BehaveFlags.VFill | BehaveFlags.Left });
-			root.AddChild(alignedBoxes[4] = new() { Size = new(10, 10), Behave = BehaveFlags.VFill | BehaveFlags.Right });
-			root.AddChild(alignedBoxes[5] = new() { Size = new(10, 10), Behave = BehaveFlags.VFill | BehaveFlags.HCenter });
+			root.AddChild(alignedBoxes[3] = new() { RequestedSize = new(10, 10), Behave = BehaveFlags.VFill | BehaveFlags.Left });
+			root.AddChild(alignedBoxes[4] = new() { RequestedSize = new(10, 10), Behave = BehaveFlags.VFill | BehaveFlags.Right });
+			root.AddChild(alignedBoxes[5] = new() { RequestedSize = new(10, 10), Behave = BehaveFlags.VFill | BehaveFlags.HCenter });
 
 			root.Run();
 
@@ -406,7 +406,7 @@ namespace Nimble.Layout.Tests
 		public void WrapRow1()
 		{
 			var root = new LayoutItem {
-				Size = new(50, 50),
+				RequestedSize = new(50, 50),
 				Contain = ContainFlags.Row | ContainFlags.Wrap,
 			};
 
@@ -416,7 +416,7 @@ namespace Nimble.Layout.Tests
 			var items = new LayoutItem[5 * 5];
 			for (int i = 0; i < items.Length; i++) {
 				items[i] = new LayoutItem {
-					Size = new(10, 10),
+					RequestedSize = new(10, 10),
 				};
 			}
 			root.AddChildren(items);
@@ -433,7 +433,7 @@ namespace Nimble.Layout.Tests
 		public void WrapRow2()
 		{
 			var root = new LayoutItem {
-				Size = new(57, 57),
+				RequestedSize = new(57, 57),
 				Contain = ContainFlags.Row | ContainFlags.Wrap,
 				Align = AlignFlags.AlignStart,
 			};
@@ -443,7 +443,7 @@ namespace Nimble.Layout.Tests
 			var items = new LayoutItem[5 * 5];
 			for (int i = 0; i < items.Length; i++) {
 				items[i] = new LayoutItem {
-					Size = new(10, 10),
+					RequestedSize = new(10, 10),
 				};
 			}
 			root.AddChildren(items);
@@ -460,7 +460,7 @@ namespace Nimble.Layout.Tests
 		public void WrapRow3()
 		{
 			var root = new LayoutItem {
-				Size = new(57, 57),
+				RequestedSize = new(57, 57),
 				Contain = ContainFlags.Row | ContainFlags.Wrap,
 				Align = AlignFlags.AlignEnd,
 			};
@@ -470,7 +470,7 @@ namespace Nimble.Layout.Tests
 			var items = new LayoutItem[5 * 5];
 			for (int i = 0; i < items.Length; i++) {
 				items[i] = new LayoutItem {
-					Size = new(10, 10),
+					RequestedSize = new(10, 10),
 				};
 			}
 			root.AddChildren(items);
@@ -487,13 +487,13 @@ namespace Nimble.Layout.Tests
 		public void WrapRow4()
 		{
 			var root = new LayoutItem {
-				Size = new(58, 57),
+				RequestedSize = new(58, 57),
 				Contain = ContainFlags.Row | ContainFlags.Wrap,
 				Align = AlignFlags.AlignMiddle,
 			};
 
 			root.AddChild(new LayoutItem {
-				Size = new(58, 7),
+				RequestedSize = new(58, 7),
 			});
 
 			// This one should split the horizontal extra space between the left and
@@ -503,7 +503,7 @@ namespace Nimble.Layout.Tests
 			var items = new LayoutItem[5 * 5];
 			for (int i = 0; i < items.Length; i++) {
 				items[i] = new LayoutItem {
-					Size = new(10, 10),
+					RequestedSize = new(10, 10),
 				};
 			}
 			root.AddChildren(items);
@@ -520,7 +520,7 @@ namespace Nimble.Layout.Tests
 		public void WrapRow5()
 		{
 			var root = new LayoutItem {
-				Size = new(54, 50),
+				RequestedSize = new(54, 50),
 				Contain = ContainFlags.Row | ContainFlags.Wrap,
 				Align = AlignFlags.AlignJustify,
 			};
@@ -528,7 +528,7 @@ namespace Nimble.Layout.Tests
 			var items = new LayoutItem[5 * 5];
 			for (int i = 0; i < items.Length; i++) {
 				items[i] = new LayoutItem {
-					Size = new(10, 10),
+					RequestedSize = new(10, 10),
 				};
 			}
 			root.AddChildren(items);
@@ -548,7 +548,7 @@ namespace Nimble.Layout.Tests
 		public void WrapColumn1()
 		{
 			var root = new LayoutItem {
-				Size = new(50, 50),
+				RequestedSize = new(50, 50),
 				Contain = ContainFlags.Column | ContainFlags.Wrap,
 			};
 
@@ -558,7 +558,7 @@ namespace Nimble.Layout.Tests
 			var items = new LayoutItem[5 * 5];
 			for (int i = 0; i < items.Length; i++) {
 				items[i] = new LayoutItem {
-					Size = new(10, 10),
+					RequestedSize = new(10, 10),
 				};
 			}
 			root.AddChildren(items);
@@ -575,7 +575,7 @@ namespace Nimble.Layout.Tests
 		public void WrapColumn2()
 		{
 			var root = new LayoutItem {
-				Size = new(57, 57),
+				RequestedSize = new(57, 57),
 				Contain = ContainFlags.Column | ContainFlags.Wrap,
 				Align = AlignFlags.AlignStart,
 			};
@@ -585,7 +585,7 @@ namespace Nimble.Layout.Tests
 			var items = new LayoutItem[5 * 5];
 			for (int i = 0; i < items.Length; i++) {
 				items[i] = new LayoutItem {
-					Size = new(10, 10),
+					RequestedSize = new(10, 10),
 				};
 			}
 			root.AddChildren(items);
@@ -602,7 +602,7 @@ namespace Nimble.Layout.Tests
 		public void WrapColumn3()
 		{
 			var root = new LayoutItem {
-				Size = new(57, 57),
+				RequestedSize = new(57, 57),
 				Contain = ContainFlags.Column | ContainFlags.Wrap,
 				Align = AlignFlags.AlignEnd,
 			};
@@ -612,7 +612,7 @@ namespace Nimble.Layout.Tests
 			var items = new LayoutItem[5 * 5];
 			for (int i = 0; i < items.Length; i++) {
 				items[i] = new LayoutItem {
-					Size = new(10, 10),
+					RequestedSize = new(10, 10),
 				};
 			}
 			root.AddChildren(items);
@@ -629,13 +629,13 @@ namespace Nimble.Layout.Tests
 		public void WrapColumn4()
 		{
 			var root = new LayoutItem {
-				Size = new(57, 58),
+				RequestedSize = new(57, 58),
 				Contain = ContainFlags.Column | ContainFlags.Wrap,
 				Align = AlignFlags.AlignMiddle,
 			};
 
 			root.AddChild(new LayoutItem {
-				Size = new(7, 58),
+				RequestedSize = new(7, 58),
 			});
 
 			// Just like wrap_row_4, but as columns instead of rows
@@ -643,7 +643,7 @@ namespace Nimble.Layout.Tests
 			var items = new LayoutItem[5 * 5];
 			for (int i = 0; i < items.Length; i++) {
 				items[i] = new LayoutItem {
-					Size = new(10, 10),
+					RequestedSize = new(10, 10),
 				};
 			}
 			root.AddChildren(items);
@@ -660,12 +660,12 @@ namespace Nimble.Layout.Tests
 		public void AnchorRightMargin1()
 		{
 			var root = new LayoutItem {
-				Size = new(100, 100),
+				RequestedSize = new(100, 100),
 			};
 
 			var child = new LayoutItem {
-				Size = new(50, 50),
-				Margins = new(5, 5, 0, 0),
+				RequestedSize = new(50, 50),
+				RequestedMargins = new(5, 5, 0, 0),
 				Behave = BehaveFlags.Bottom | BehaveFlags.Right,
 			};
 
@@ -679,12 +679,12 @@ namespace Nimble.Layout.Tests
 		public void AnchorRightMargin2()
 		{
 			var root = new LayoutItem {
-				Size = new(100, 100),
+				RequestedSize = new(100, 100),
 			};
 
 			var child = new LayoutItem {
-				Size = new(50, 50),
-				Margins = new(5, 5, 10, 10),
+				RequestedSize = new(50, 50),
+				RequestedMargins = new(5, 5, 10, 10),
 				Behave = BehaveFlags.Bottom | BehaveFlags.Right,
 			};
 
@@ -698,7 +698,7 @@ namespace Nimble.Layout.Tests
 		public void IssueUpstream15()
 		{
 			var root = new LayoutItem {
-				Size = new(1, 100),
+				RequestedSize = new(1, 100),
 			};
 
 			var row = new LayoutItem {
@@ -707,8 +707,8 @@ namespace Nimble.Layout.Tests
 			root.AddChild(row);
 
 			var child = new LayoutItem {
-				Size = new(1, 50),
-				Margins = new(0, 0, 0, 10),
+				RequestedSize = new(1, 50),
+				RequestedMargins = new(0, 0, 0, 10),
 			};
 			row.AddChild(child);
 

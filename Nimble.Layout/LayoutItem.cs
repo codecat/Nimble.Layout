@@ -14,11 +14,11 @@ namespace Nimble.Layout
 
 		public LayoutItem? FirstChild { get; internal set; }
 		public LayoutItem? NextSibling { get; internal set; }
-		public LayoutMargins Margins { get; set; } = new();
-		public LayoutVector Size { get; set; } = new();
 
-		public LayoutRect Rect => m_computedRect;
-		private LayoutRect m_computedRect = new();
+		public LayoutMargins RequestedMargins = new();
+		public LayoutVector RequestedSize = new();
+
+		public LayoutRect Rect = new();
 
 		public ContainFlags Contain
 		{
@@ -110,9 +110,9 @@ namespace Nimble.Layout
 			Flags = 0;
 			FirstChild = null;
 			NextSibling = null;
-			Margins = new();
-			Size = new();
-			m_computedRect = new();
+			RequestedMargins = new();
+			RequestedSize = new();
+			Rect = new();
 		}
 
 		/// <summary>
@@ -209,12 +209,12 @@ namespace Nimble.Layout
 			}
 
 			// Set the mutable rect output data to the starting input data
-			m_computedRect[dim] = Margins[dim];
+			Rect[dim] = RequestedMargins[dim];
 
 			// If we have an explicit input size, just set our output size (which other
 			// calc_size and arrange procedures will use) to it.
-			if (Size[dim] != 0) {
-				m_computedRect[2 + dim] = Size[dim];
+			if (RequestedSize[dim] != 0) {
+				Rect[2 + dim] = RequestedSize[dim];
 				return;
 			}
 
@@ -258,7 +258,7 @@ namespace Nimble.Layout
 
 			// Set our output data size. Will be used by parent calc_size procedures,
 			// and by arrange procedures.
-			m_computedRect[2 + dim] = cal_size;
+			Rect[2 + dim] = cal_size;
 		}
 
 		private float CalcStackedSize(int dim)
@@ -266,7 +266,7 @@ namespace Nimble.Layout
 			int wdim = dim + 2;
 			float need_size = 0;
 			foreach (var child in Children) {
-				need_size += child.m_computedRect[dim] + child.m_computedRect[2 + dim] + child.Margins[wdim];
+				need_size += child.Rect[dim] + child.Rect[2 + dim] + child.RequestedMargins[wdim];
 			}
 			return need_size;
 		}
@@ -277,7 +277,7 @@ namespace Nimble.Layout
 			float need_size = 0;
 			foreach (var child in Children) {
 				// width = start margin + calculated width + end margin
-				float child_size = child.m_computedRect[dim] + child.m_computedRect[2 + dim] + child.Margins[wdim];
+				float child_size = child.Rect[dim] + child.Rect[2 + dim] + child.RequestedMargins[wdim];
 				need_size = Math.Max(need_size, child_size);
 			}
 			return need_size;
@@ -293,7 +293,7 @@ namespace Nimble.Layout
 					need_size2 = Math.Max(need_size2, need_size);
 					need_size = 0;
 				}
-				need_size += child.m_computedRect[dim] + child.m_computedRect[2 + dim] + child.Margins[wdim];
+				need_size += child.Rect[dim] + child.Rect[2 + dim] + child.RequestedMargins[wdim];
 			}
 			return Math.Max(need_size2, need_size);
 		}
@@ -308,7 +308,7 @@ namespace Nimble.Layout
 					need_size2 += need_size;
 					need_size = 0;
 				}
-				float child_size = child.m_computedRect[dim] + child.m_computedRect[2 + dim] + child.Margins[wdim];
+				float child_size = child.Rect[dim] + child.Rect[2 + dim] + child.RequestedMargins[wdim];
 				need_size = Math.Max(need_size, child_size);
 			}
 			return need_size2 + need_size;
@@ -321,7 +321,7 @@ namespace Nimble.Layout
 					if (dim != 0) {
 						ArrangeStacked(1, true);
 						float offset = ArrangeWrappedOverlaySqueezed(0);
-						m_computedRect[2] = offset - m_computedRect[0];
+						Rect[2] = offset - Rect[0];
 					}
 					break;
 
@@ -339,7 +339,7 @@ namespace Nimble.Layout
 					if ((Flags & 1) == (uint)dim) {
 						ArrangeStacked(dim, false);
 					} else {
-						ArrangeOverlaySqueezedRange(dim, FirstChild, null, m_computedRect[dim], m_computedRect[2 + dim]);
+						ArrangeOverlaySqueezedRange(dim, FirstChild, null, Rect[dim], Rect[2 + dim]);
 					}
 					break;
 
@@ -358,8 +358,8 @@ namespace Nimble.Layout
 		{
 			int wdim = dim + 2;
 
-			float space = m_computedRect[2 + dim];
-			float max_x2 = m_computedRect[dim] + space;
+			float space = Rect[2 + dim];
+			float max_x2 = Rect[dim] + space;
 
 			var startChild = FirstChild;
 			while (startChild != null) {
@@ -378,12 +378,12 @@ namespace Nimble.Layout
 					float extend = used;
 					if (flags.HasFlag(BehaveFlags.HFill)) {
 						count++;
-						extend += child.m_computedRect[dim] + child.Margins[wdim];
+						extend += child.Rect[dim] + child.RequestedMargins[wdim];
 					} else {
 						if (!fflags.HasFlag(ItemFlags.HFixed)) {
 							squeezed_count++;
 						}
-						extend += child.m_computedRect[dim] + child.m_computedRect[2 + dim] + child.Margins[wdim];
+						extend += child.Rect[dim] + child.Rect[2 + dim] + child.RequestedMargins[wdim];
 					}
 					// wrap on end of line or manual flag
 					if (wrap && total > 0 && ((extend > space) || child.Behave.HasFlag(BehaveFlags.Break))) {
@@ -441,7 +441,7 @@ namespace Nimble.Layout
 				}
 
 				// distribute width among items
-				float x = m_computedRect[dim];
+				float x = Rect[dim];
 				float x1;
 				// second pass: distribute and rescale
 				child = startChild;
@@ -450,24 +450,24 @@ namespace Nimble.Layout
 					var flags = (BehaveFlags)((uint)child.Behave >> dim);
 					var fflags = (ItemFlags)((uint)child.ItemFlagsHFixed >> dim);
 
-					x += child.m_computedRect[dim] + extra_margin;
+					x += child.Rect[dim] + extra_margin;
 					if (flags.HasFlag(BehaveFlags.HFill)) { // grow
 						x1 = x + filler;
 					} else if (fflags.HasFlag(ItemFlags.HFixed)) {
-						x1 = x + child.m_computedRect[2 + dim];
+						x1 = x + child.Rect[2 + dim];
 					} else { // squeeze
-						x1 = x + Math.Max(0.0f, child.m_computedRect[2 + dim] + eater);
+						x1 = x + Math.Max(0.0f, child.Rect[2 + dim] + eater);
 					}
 
 					ix0 = x;
 					if (wrap) {
-						ix1 = Math.Min(max_x2 - child.Margins[wdim], x1);
+						ix1 = Math.Min(max_x2 - child.RequestedMargins[wdim], x1);
 					} else {
 						ix1 = x1;
 					}
-					child.m_computedRect[dim] = ix0; // pos
-					child.m_computedRect[dim + 2] = ix1 - ix0; // size
-					x = x1 + child.Margins[wdim];
+					child.Rect[dim] = ix0; // pos
+					child.Rect[dim + 2] = ix1 - ix0; // size
+					x = x1 + child.RequestedMargins[wdim];
 					child = child.NextSibling;
 					extra_margin = spacer;
 				}
@@ -479,37 +479,37 @@ namespace Nimble.Layout
 		private void ArrangeOverlay(int dim)
 		{
 			int wdim = dim + 2;
-			float offset = m_computedRect[dim];
-			float space = m_computedRect[2 + dim];
+			float offset = Rect[dim];
+			float space = Rect[2 + dim];
 
 			foreach (var child in Children) {
 				var b_flags = (BehaveFlags)((uint)child.Behave >> dim);
 
 				switch (b_flags & BehaveFlags.HFill) {
 					case BehaveFlags.HCenter:
-						child.m_computedRect[dim] += (space - child.m_computedRect[2 + dim] - child.Margins[wdim]) / 2;
+						child.Rect[dim] += (space - child.Rect[2 + dim] - child.RequestedMargins[wdim]) / 2;
 						break;
 
 					case BehaveFlags.Right:
-						child.m_computedRect[dim] += space - child.m_computedRect[2 + dim] - child.Margins[dim] - child.Margins[wdim];
+						child.Rect[dim] += space - child.Rect[2 + dim] - child.RequestedMargins[dim] - child.RequestedMargins[wdim];
 						break;
 
 					case BehaveFlags.HFill:
-						child.m_computedRect[2 + dim] = Math.Max(0.0f, space - child.m_computedRect[dim] - child.Margins[wdim]);
+						child.Rect[2 + dim] = Math.Max(0.0f, space - child.Rect[dim] - child.RequestedMargins[wdim]);
 						break;
 
 					default:
 						break;
 				}
 
-				child.m_computedRect[dim] += offset;
+				child.Rect[dim] += offset;
 			}
 		}
 
 		private float ArrangeWrappedOverlaySqueezed(int dim)
 		{
 			int wdim = dim + 2;
-			float offset = m_computedRect[dim];
+			float offset = Rect[dim];
 			float need_size = 0;
 			var startChild = FirstChild;
 			foreach (var child in Children) {
@@ -519,7 +519,7 @@ namespace Nimble.Layout
 					startChild = child;
 					need_size = 0;
 				}
-				float child_size = child.m_computedRect[dim] + child.m_computedRect[2 + dim] + child.Margins[wdim];
+				float child_size = child.Rect[dim] + child.Rect[2 + dim] + child.RequestedMargins[wdim];
 				need_size = Math.Max(need_size, child_size);
 			}
 			ArrangeOverlaySqueezedRange(dim, startChild, null, offset, need_size);
@@ -534,28 +534,28 @@ namespace Nimble.Layout
 			while (item != endItem && item != null) {
 				var b_flags = (BehaveFlags)((uint)item.Behave >> dim);
 
-				float min_size = Math.Max(0.0f, space - item.m_computedRect[dim] - item.Margins[wdim]);
+				float min_size = Math.Max(0.0f, space - item.Rect[dim] - item.RequestedMargins[wdim]);
 				switch (b_flags & BehaveFlags.HFill) {
 					case BehaveFlags.HCenter:
-						item.m_computedRect[2 + dim] = Math.Min(item.m_computedRect[2 + dim], min_size);
-						item.m_computedRect[dim] += (space - item.m_computedRect[2 + dim] - item.Margins[wdim]) / 2;
+						item.Rect[2 + dim] = Math.Min(item.Rect[2 + dim], min_size);
+						item.Rect[dim] += (space - item.Rect[2 + dim] - item.RequestedMargins[wdim]) / 2;
 						break;
 
 					case BehaveFlags.Right:
-						item.m_computedRect[2 + dim] = Math.Min(item.m_computedRect[2 + dim], min_size);
-						item.m_computedRect[dim] = space - item.m_computedRect[2 + dim] - item.Margins[wdim];
+						item.Rect[2 + dim] = Math.Min(item.Rect[2 + dim], min_size);
+						item.Rect[dim] = space - item.Rect[2 + dim] - item.RequestedMargins[wdim];
 						break;
 
 					case BehaveFlags.HFill:
-						item.m_computedRect[2 + dim] = min_size;
+						item.Rect[2 + dim] = min_size;
 						break;
 
 					default:
-						item.m_computedRect[2 + dim] = Math.Min(item.m_computedRect[2 + dim], min_size);
+						item.Rect[2 + dim] = Math.Min(item.Rect[2 + dim], min_size);
 						break;
 				}
 
-				item.m_computedRect[dim] += offset;
+				item.Rect[dim] += offset;
 				item = item.NextSibling;
 			}
 		}
