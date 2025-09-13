@@ -6,6 +6,7 @@
 		public float Y = y;
 
 		public LayoutVector() : this(0, 0) { }
+		public LayoutVector(float v) : this(v, v) { }
 
 		public float this[int index]
 		{
