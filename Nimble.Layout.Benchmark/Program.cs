@@ -35,7 +35,7 @@
 			};
 
 			var mainChild = new LayoutItem {
-				RequestedMargins = new(10),
+				RequestedMargin = new(10),
 				Contain = ContainFlags.Column,
 				Behave = BehaveFlags.Fill,
 			};

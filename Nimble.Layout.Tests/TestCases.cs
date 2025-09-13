@@ -128,7 +128,7 @@ namespace Nimble.Layout.Tests
 
 			var childA = new LayoutItem {
 				RequestedSize = new(0, 30 - (5 + 10)),
-				RequestedMargins = new(3, 5, 7, 10),
+				RequestedMargin = new(3, 5, 7, 10),
 				Behave = BehaveFlags.HFill,
 			};
 			var childB = new LayoutItem {
@@ -142,10 +142,10 @@ namespace Nimble.Layout.Tests
 			root.AddChildren([childA, childB, childC]);
 			root.Run();
 
-			Assert.AreEqual(3, childA.RequestedMargins.Left);
-			Assert.AreEqual(5, childA.RequestedMargins.Top);
-			Assert.AreEqual(7, childA.RequestedMargins.Right);
-			Assert.AreEqual(10, childA.RequestedMargins.Bottom);
+			Assert.AreEqual(3, childA.RequestedMargin.Left);
+			Assert.AreEqual(5, childA.RequestedMargin.Top);
+			Assert.AreEqual(7, childA.RequestedMargin.Right);
+			Assert.AreEqual(10, childA.RequestedMargin.Bottom);
 
 			Assert.AreEqual(new(3, 5, 90, 5 + 10), childA.Rect);
 			Assert.AreEqual(new(0, 30, 100, 30), childB.Rect);
@@ -164,7 +164,7 @@ namespace Nimble.Layout.Tests
 			};
 
 			var mainChild = new LayoutItem {
-				RequestedMargins = new(10),
+				RequestedMargin = new(10),
 				Contain = ContainFlags.Column,
 				Behave = BehaveFlags.Fill,
 			};
@@ -665,7 +665,7 @@ namespace Nimble.Layout.Tests
 
 			var child = new LayoutItem {
 				RequestedSize = new(50, 50),
-				RequestedMargins = new(5, 5, 0, 0),
+				RequestedMargin = new(5, 5, 0, 0),
 				Behave = BehaveFlags.Bottom | BehaveFlags.Right,
 			};
 
@@ -684,7 +684,7 @@ namespace Nimble.Layout.Tests
 
 			var child = new LayoutItem {
 				RequestedSize = new(50, 50),
-				RequestedMargins = new(5, 5, 10, 10),
+				RequestedMargin = new(5, 5, 10, 10),
 				Behave = BehaveFlags.Bottom | BehaveFlags.Right,
 			};
 
@@ -708,7 +708,7 @@ namespace Nimble.Layout.Tests
 
 			var child = new LayoutItem {
 				RequestedSize = new(1, 50),
-				RequestedMargins = new(0, 0, 0, 10),
+				RequestedMargin = new(0, 0, 0, 10),
 			};
 			row.AddChild(child);
 
