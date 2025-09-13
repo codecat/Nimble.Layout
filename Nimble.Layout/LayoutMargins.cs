@@ -32,5 +32,18 @@
 		}
 
 		public override readonly string ToString() => $"<l:{Left}, t:{Top}, r:{Right}, b:{Bottom}>";
+
+		public static LayoutMargins Parse(string text)
+		{
+			var parse = text.Split(' ');
+			if (parse.Length == 1) {
+				return new(float.Parse(parse[0]));
+			} else if (parse.Length == 2) {
+				return new(float.Parse(parse[0]), float.Parse(parse[1]));
+			} else if (parse.Length == 4) {
+				return new(float.Parse(parse[0]), float.Parse(parse[1]), float.Parse(parse[2]), float.Parse(parse[3]));
+			}
+			throw new FormatException("Invalid layout margins format");
+		}
 	}
 }
