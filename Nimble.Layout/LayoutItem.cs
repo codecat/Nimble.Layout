@@ -16,6 +16,7 @@ namespace Nimble.Layout
 		public LayoutItem? NextSibling { get; internal set; }
 
 		public LayoutEdges RequestedMargin = new();
+		public LayoutEdges RequestedPadding = new();
 		public LayoutVector RequestedSize = new();
 
 		public LayoutRect Rect = new();
@@ -111,6 +112,7 @@ namespace Nimble.Layout
 			FirstChild = null;
 			NextSibling = null;
 			RequestedMargin = new();
+			RequestedPadding = new();
 			RequestedSize = new();
 			Rect = new();
 		}
@@ -268,7 +270,7 @@ namespace Nimble.Layout
 			foreach (var child in Children) {
 				need_size += child.Rect[dim] + child.Rect[wdim] + child.RequestedMargin[wdim];
 			}
-			return need_size;
+			return RequestedPadding.GetDimension(dim) + need_size;
 		}
 
 		private float CalcOverlayedSize(int dim)
@@ -280,7 +282,7 @@ namespace Nimble.Layout
 				float child_size = child.Rect[dim] + child.Rect[wdim] + child.RequestedMargin[wdim];
 				need_size = Math.Max(need_size, child_size);
 			}
-			return need_size;
+			return RequestedPadding.GetDimension(dim) + need_size;
 		}
 
 		private float CalcWrappedStackedSize(int dim)
@@ -295,7 +297,7 @@ namespace Nimble.Layout
 				}
 				need_size += child.Rect[dim] + child.Rect[wdim] + child.RequestedMargin[wdim];
 			}
-			return Math.Max(need_size2, need_size);
+			return RequestedPadding.GetDimension(dim) + Math.Max(need_size2, need_size);
 		}
 
 		private float CalcWrappedOverlayedSize(int dim)
@@ -311,7 +313,7 @@ namespace Nimble.Layout
 				float child_size = child.Rect[dim] + child.Rect[wdim] + child.RequestedMargin[wdim];
 				need_size = Math.Max(need_size, child_size);
 			}
-			return need_size2 + need_size;
+			return RequestedPadding.GetDimension(dim) + need_size2 + need_size;
 		}
 
 		private void Arrange(int dim)
@@ -339,7 +341,9 @@ namespace Nimble.Layout
 					if ((Flags & 1) == (uint)dim) {
 						ArrangeStacked(dim, false);
 					} else {
-						ArrangeOverlaySqueezedRange(dim, FirstChild, null, Rect[dim], Rect[2 + dim]);
+						ArrangeOverlaySqueezedRange(dim, FirstChild, null,
+							Rect[dim] + RequestedPadding[dim],
+							Rect[2 + dim] - RequestedPadding.GetDimension(dim));
 					}
 					break;
 
@@ -358,8 +362,8 @@ namespace Nimble.Layout
 		{
 			int wdim = dim + 2;
 
-			float space = Rect[wdim];
-			float max_x2 = Rect[dim] + space;
+			float space = Rect[wdim] - RequestedPadding.GetDimension(dim);
+			float max_x2 = Rect[dim] + space + RequestedPadding[dim];
 
 			var startChild = FirstChild;
 			while (startChild != null) {
@@ -441,7 +445,7 @@ namespace Nimble.Layout
 				}
 
 				// distribute width among items
-				float x = Rect[dim];
+				float x = Rect[dim] + RequestedPadding[dim];
 				float x1;
 				// second pass: distribute and rescale
 				child = startChild;
@@ -479,8 +483,8 @@ namespace Nimble.Layout
 		private void ArrangeOverlay(int dim)
 		{
 			int wdim = dim + 2;
-			float offset = Rect[dim];
-			float space = Rect[wdim];
+			float offset = Rect[dim] + RequestedPadding[dim];
+			float space = Rect[wdim] - RequestedPadding.GetDimension(dim);
 
 			foreach (var child in Children) {
 				var b_flags = (BehaveFlags)((uint)child.Behave >> dim);
@@ -509,7 +513,7 @@ namespace Nimble.Layout
 		private float ArrangeWrappedOverlaySqueezed(int dim)
 		{
 			int wdim = dim + 2;
-			float offset = Rect[dim];
+			float offset = Rect[dim] + RequestedPadding[dim];
 			float need_size = 0;
 			var startChild = FirstChild;
 			foreach (var child in Children) {
