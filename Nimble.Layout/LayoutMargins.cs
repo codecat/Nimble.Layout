@@ -7,9 +7,19 @@
 		public float Right = right;
 		public float Bottom = bottom;
 
+		public readonly float Horizontal => Left + Right;
+		public readonly float Vertical => Top + Bottom;
+
 		public LayoutMargins() : this(0, 0, 0, 0) { }
 		public LayoutMargins(float m) : this(m, m, m, m) { }
 		public LayoutMargins(float h, float v) : this(h, v, h, v) { }
+
+		public readonly float GetDimension(int dim)
+			=> dim switch {
+				0 => Left + Right,
+				1 => Top + Bottom,
+				_ => throw new IndexOutOfRangeException(),
+			};
 
 		public float this[int index]
 		{
