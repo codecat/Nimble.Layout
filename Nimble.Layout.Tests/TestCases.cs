@@ -435,7 +435,7 @@ namespace Nimble.Layout.Tests
 			var root = new LayoutItem {
 				RequestedSize = new(57, 57),
 				Contain = ContainFlags.Row | ContainFlags.Wrap,
-				Align = AlignFlags.AlignStart,
+				Align = AlignFlags.Start,
 			};
 
 			// This one should ahve extra space on the right edge and bottom (7 units)
@@ -462,7 +462,7 @@ namespace Nimble.Layout.Tests
 			var root = new LayoutItem {
 				RequestedSize = new(57, 57),
 				Contain = ContainFlags.Row | ContainFlags.Wrap,
-				Align = AlignFlags.AlignEnd,
+				Align = AlignFlags.End,
 			};
 
 			// This one should have extra space on the left edge and bottom (7 units)
@@ -489,7 +489,7 @@ namespace Nimble.Layout.Tests
 			var root = new LayoutItem {
 				RequestedSize = new(58, 57),
 				Contain = ContainFlags.Row | ContainFlags.Wrap,
-				Align = AlignFlags.AlignMiddle,
+				Align = AlignFlags.Middle,
 			};
 
 			root.AddChild(new LayoutItem {
@@ -522,7 +522,7 @@ namespace Nimble.Layout.Tests
 			var root = new LayoutItem {
 				RequestedSize = new(54, 50),
 				Contain = ContainFlags.Row | ContainFlags.Wrap,
-				Align = AlignFlags.AlignJustify,
+				Align = AlignFlags.Justify,
 			};
 
 			var items = new LayoutItem[5 * 5];
@@ -534,8 +534,8 @@ namespace Nimble.Layout.Tests
 			root.AddChildren(items);
 			root.Run();
 
-			// Note that we are ignoring the last line here, as it will behave like AlignFlags.AlignStart.
-			// Typically justifying does not need to be done here (it will behave like AlignFlags.AlignStart instead).
+			// Note that we are ignoring the last line here, as it will behave like AlignFlags.Start.
+			// Typically justifying does not need to be done here (it will behave like AlignFlags.Start instead).
 			// The author of layout.h calls this a bug, but we deem this intentional behavior.
 			for (int i = 0; i < items.Length - 5; i++) {
 				int x = i % 5;
@@ -577,7 +577,7 @@ namespace Nimble.Layout.Tests
 			var root = new LayoutItem {
 				RequestedSize = new(57, 57),
 				Contain = ContainFlags.Column | ContainFlags.Wrap,
-				Align = AlignFlags.AlignStart,
+				Align = AlignFlags.Start,
 			};
 
 			// This one should have extra space on the right and bottom (7 units)
@@ -604,7 +604,7 @@ namespace Nimble.Layout.Tests
 			var root = new LayoutItem {
 				RequestedSize = new(57, 57),
 				Contain = ContainFlags.Column | ContainFlags.Wrap,
-				Align = AlignFlags.AlignEnd,
+				Align = AlignFlags.End,
 			};
 
 			// This one should have extra space on the top and right (7 units)
@@ -631,7 +631,7 @@ namespace Nimble.Layout.Tests
 			var root = new LayoutItem {
 				RequestedSize = new(57, 58),
 				Contain = ContainFlags.Column | ContainFlags.Wrap,
-				Align = AlignFlags.AlignMiddle,
+				Align = AlignFlags.Middle,
 			};
 
 			root.AddChild(new LayoutItem {

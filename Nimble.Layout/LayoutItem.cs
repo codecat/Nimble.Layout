@@ -410,7 +410,7 @@ namespace Nimble.Layout
 						filler = extra_space / count;
 					} else if (total > 0) {
 						switch (Align) {
-							case AlignFlags.AlignJustify:
+							case AlignFlags.Justify:
 								// justify when not wrapping or not in last line,
 								// or not manually breaking
 								if (!wrap || ((endChild != null) && !hardbreak)) {
@@ -418,10 +418,10 @@ namespace Nimble.Layout
 								}
 								break;
 
-							case AlignFlags.AlignStart:
+							case AlignFlags.Start:
 								break;
 
-							case AlignFlags.AlignEnd:
+							case AlignFlags.End:
 								extra_margin = extra_space;
 								break;
 
