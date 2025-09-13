@@ -15,7 +15,7 @@ namespace Nimble.Layout
 		public LayoutItem? FirstChild { get; internal set; }
 		public LayoutItem? NextSibling { get; internal set; }
 
-		public LayoutMargins RequestedMargins = new();
+		public LayoutEdges RequestedMargins = new();
 		public LayoutVector RequestedSize = new();
 
 		public LayoutRect Rect = new();

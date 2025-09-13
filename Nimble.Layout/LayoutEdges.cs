@@ -1,6 +1,6 @@
 ﻿namespace Nimble.Layout
 {
-	public struct LayoutMargins(float left, float top, float right, float bottom)
+	public struct LayoutEdges(float left, float top, float right, float bottom)
 	{
 		public float Left = left;
 		public float Top = top;
@@ -10,9 +10,9 @@
 		public readonly float Horizontal => Left + Right;
 		public readonly float Vertical => Top + Bottom;
 
-		public LayoutMargins() : this(0, 0, 0, 0) { }
-		public LayoutMargins(float m) : this(m, m, m, m) { }
-		public LayoutMargins(float h, float v) : this(h, v, h, v) { }
+		public LayoutEdges() : this(0, 0, 0, 0) { }
+		public LayoutEdges(float m) : this(m, m, m, m) { }
+		public LayoutEdges(float h, float v) : this(h, v, h, v) { }
 
 		public readonly float GetDimension(int dim)
 			=> dim switch {
@@ -43,7 +43,7 @@
 
 		public override readonly string ToString() => $"<l:{Left}, t:{Top}, r:{Right}, b:{Bottom}>";
 
-		public static LayoutMargins Parse(string text)
+		public static LayoutEdges Parse(string text)
 		{
 			var parse = text.Split(' ');
 			if (parse.Length == 1) {
