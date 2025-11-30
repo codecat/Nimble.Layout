@@ -695,6 +695,92 @@ namespace Nimble.Layout.Tests
 		}
 
 		[TestMethod]
+		public void Padding1()
+		{
+			var root = new LayoutItem {
+				RequestedPadding = new(10),
+			};
+
+			var child = new LayoutItem {
+				RequestedSize = new(15),
+			};
+
+			root.AddChild(child);
+			root.Run();
+
+			Assert.AreEqual(new(0, 0, 35, 35), root.Rect);
+			Assert.AreEqual(new(10, 10, 15, 15), child.Rect);
+		}
+
+		[TestMethod]
+		public void PaddingRow()
+		{
+			var root = new LayoutItem {
+				RequestedPadding = new(10),
+				Contain = ContainFlags.Row,
+			};
+
+			var child1 = new LayoutItem { RequestedSize = new(15) };
+			var child2 = new LayoutItem { RequestedSize = new(15) };
+
+			root.AddChild(child1);
+			root.AddChild(child2);
+			root.Run();
+
+			Assert.AreEqual(new(0, 0, 50, 35), root.Rect);
+			Assert.AreEqual(new(10, 10, 15, 15), child1.Rect);
+			Assert.AreEqual(new(25, 10, 15, 15), child2.Rect);
+		}
+
+		[TestMethod]
+		public void PaddingColumn()
+		{
+			var root = new LayoutItem {
+				RequestedPadding = new(10),
+				Contain = ContainFlags.Column,
+			};
+
+			var child1 = new LayoutItem { RequestedSize = new(15) };
+			var child2 = new LayoutItem { RequestedSize = new(15) };
+
+			root.AddChild(child1);
+			root.AddChild(child2);
+			root.Run();
+
+			Assert.AreEqual(new(0, 0, 35, 50), root.Rect);
+			Assert.AreEqual(new(10, 10, 15, 15), child1.Rect);
+			Assert.AreEqual(new(10, 25, 15, 15), child2.Rect);
+		}
+
+		[TestMethod]
+		public void PaddingFixedAndFill()
+		{
+			var root = new LayoutItem {
+				RequestedSize = new(50, 60),
+				RequestedPadding = new(10),
+				Contain = ContainFlags.Column,
+			};
+
+			var fixedA = new LayoutItem {
+				RequestedSize = new(50, 15),
+			};
+			var fixedB = new LayoutItem {
+				RequestedSize = new(50, 15),
+			};
+			var filler = new LayoutItem {
+				Behave = BehaveFlags.Fill,
+			};
+
+			root.AddChildren([fixedA, filler, fixedB]);
+			root.Run();
+
+			Assert.AreEqual(new(0, 0, 50, 60), root.Rect);
+			Assert.AreEqual(new(10, 10, 30, 15), fixedA.Rect);
+			Assert.AreEqual(new(10, 25, 30, 10), filler.Rect);
+			Assert.AreEqual(new(10, 35, 30, 15), fixedB.Rect);
+		}
+
+		[TestMethod]
 		public void IssueUpstream15()
 		{
 			var root = new LayoutItem {
